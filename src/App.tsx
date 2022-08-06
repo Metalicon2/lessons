@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { getLessons, Lesson } from "api/getLessons";
+import { LayoutProvider } from "components/Layout/LayoutProvider";
+import { LessonList } from "components/LessonList";
+import { SkeletonLoader } from "components/SkeletonLoader";
+import { useEffect, useState } from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+  const [lessons, setLessons] = useState<Lesson[]>();
+
+  useEffect(() => {
+    fetchLessons();
+  }, []);
+
+  const fetchLessons = async () => {
+    const lessons = await getLessons();
+
+    setLessons(lessons);
+  };
+
+  const loadLessons = () => {
+    if (!lessons) {
+      return <SkeletonLoader />;
+    }
+    return <LessonList lessons={lessons} />;
+  };
+
+  return <LayoutProvider>{loadLessons()}</LayoutProvider>;
+};
 
 export default App;
